@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 echo 'Checking out source code from GitHub...'
@@ -14,7 +15,7 @@ pipeline {
                 echo 'Setting up Python virtual environment...'
                 bat '''
                 python -m venv venv
-                call venv\\Scripts\\activate
+                venv\\Scripts\\activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 pip install pytest pytest-html pytest-cov
@@ -26,7 +27,7 @@ pipeline {
             steps {
                 echo 'Checking Python syntax...'
                 bat '''
-                call venv\\Scripts\\activate
+                venv\\Scripts\\activate
                 python -m py_compile app.py
                 '''
             }
@@ -34,22 +35,34 @@ pipeline {
 
         stage('Unit Test') {
             steps {
-                echo 'Running unit tests with pytest...'
+                echo 'Running unit tests...'
                 bat '''
-                call venv\\Scripts\\activate
-                mkdir test-reports
-                pytest test.py --junitxml=test-reports\\results.xml
+                venv\\Scripts\\activate
+                pytest test.py --junitxml=results.xml --html=report.html
                 '''
+            }
+            post {
+                always {
+                    junit 'results.xml'
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'report.html',
+                        reportName: 'Pytest HTML Report'
+                    ])
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'Python CI Pipeline completed successfully!'
+            echo 'Pipeline executed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Please check the logs and test reports.'
+            echo 'Pipeline failed. Please check logs.'
         }
     }
 }
