@@ -12,7 +12,7 @@ pipeline {
         stage('Setup Python Environment') {
             steps {
                 echo 'Setting up Python virtual environment...'
-                sh '''
+                bat '''
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install --upgrade pip
@@ -25,7 +25,7 @@ pipeline {
         stage('Build / Compile Check') {
             steps {
                 echo 'Checking Python syntax...'
-                sh '''
+                bat '''
                     . venv/bin/activate
                     python3 -m py_compile app.py
                 '''
@@ -35,7 +35,7 @@ pipeline {
         stage('Unit Test') {
             steps {
                 echo 'Running unit tests with pytest...'
-                sh '''
+                bat '''
                     . venv/bin/activate
                     mkdir -p test-reports
                     pytest test.py \
@@ -70,3 +70,4 @@ pipeline {
         }
     }
 }
+
