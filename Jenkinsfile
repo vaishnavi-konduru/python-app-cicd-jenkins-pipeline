@@ -44,14 +44,7 @@ pipeline {
             post {
                 always {
                     junit 'results.xml'
-                    publishHTML(target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: '.',
-                        reportFiles: 'report.html',
-                        reportName: 'Pytest HTML Report'
-                    ])
+                
                 }
             }
         }
