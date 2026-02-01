@@ -66,4 +66,7 @@ pipeline {
             echo 'Python CI Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Please check the l
+            echo 'Pipeline failed. Please check the logs and test reports.'
+        }
+    }
+}
